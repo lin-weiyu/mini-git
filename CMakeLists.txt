@@ -15,4 +15,6 @@ add_executable(
     src/commands/InitCommand.cpp
     src/commands/AddCommand.cpp
     src/commands/CommitCommand.cpp
+
+    src/core/Repository.cpp
 )
