@@ -9,5 +9,10 @@ include_directories(include)
 
 add_executable(
     mini-git
+
     src/main.cpp
+    
+    src/commands/InitCommand.cpp
+    src/commands/AddCommand.cpp
+    src/commands/CommitCommand.cpp
 )
