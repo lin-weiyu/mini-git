@@ -10,7 +10,7 @@ A simplified git implementation written in C++.
 - log
 - checkout
 
-## Issue
+## the no-standard issues in project development
 
 - the control of versions that was overlooked during the process of improving the project
 - the unit testing environment has not been created
