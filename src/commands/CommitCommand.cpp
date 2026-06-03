@@ -1,8 +1,13 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
 #include "commands/ICommand.h"
 #include "commands/CommitCommand.h"
 
-#include <iostream>
 
-void CommitCommand::execute(){
+void CommitCommand::execute(
+    const std::vector<std::string>& args
+){
     std::cout << "commit command\n";
 }

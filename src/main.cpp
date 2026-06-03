@@ -1,6 +1,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "commands/InitCommand.h"
 #include "commands/AddCommand.h"
@@ -31,7 +32,13 @@ int main(int argc, char* argv[]){
         return 1;
     }
 
-    cmd->execute();
+    std::vector<std::string> args;
+    
+    for (int i = 2; i < argc; i++){
+        args.push_back(argv[i]);
+    }
+
+    cmd->execute(args);
 
     return 0;
 }

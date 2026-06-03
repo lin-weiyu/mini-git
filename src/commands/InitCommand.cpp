@@ -1,10 +1,15 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
 #include "commands/ICommand.h"
 #include "commands/InitCommand.h"
 #include "core/Repository.h"
 
-#include <iostream>
 
-void InitCommand::execute(){
+void InitCommand::execute(
+    const std::vector<std::string>& args
+){
 
     Repository repo;
     if (repo.init()){

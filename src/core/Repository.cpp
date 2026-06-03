@@ -6,6 +6,9 @@ bool Repository::exists() const{
 }
 
 void Repository::createDirectories(){
+
+    std::filesystem::create_directory(repoPath);
+
     std::filesystem::create_directory(
         repoPath / "commits"
     );
@@ -33,4 +36,8 @@ bool Repository::init(){
     initializeHead();
     
     return true;
+}
+
+std::filesystem::path Repository::getStagingPath() const{
+    return repoPath / "staging";
 }
