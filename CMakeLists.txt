@@ -18,3 +18,31 @@ add_executable(
 
     src/core/Repository.cpp
 )
+
+enable_testing()
+
+find_package(GTest REQUIRED)
+
+add_executable(
+    repository_tests
+    tests/RepositoryTest.cpp
+    src/core/Repository.cpp
+    src/commands/AddCommand.cpp
+    src/commands/CommitCommand.cpp
+    src/commands/InitCommand.cpp
+)
+
+target_include_directories(
+    repository_tests
+    PRIVATE include
+)
+
+target_link_libraries(
+    repository_tests
+    PRIVATE
+    GTest::gtest_main
+)
+
+include(GoogleTest)
+
+gtest_discover_tests(repository_tests)
