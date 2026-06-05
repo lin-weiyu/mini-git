@@ -35,7 +35,7 @@ TEST(RepositoryTest, InitCreatesRepository){
     std::filesystem::remove_all(".mygit");
 }
 
-TEST(RepositoryTest, AddCommit){
+TEST(RepositoryTest, AddCommands){
 
     std::filesystem::remove_all(".mygit");
 
