@@ -17,6 +17,7 @@ add_executable(
     src/commands/CommitCommand.cpp
 
     src/core/Repository.cpp
+    src/core/CommitManager.cpp
 )
 
 enable_testing()
@@ -26,7 +27,10 @@ find_package(GTest REQUIRED)
 add_executable(
     repository_tests
     tests/RepositoryTest.cpp
+
     src/core/Repository.cpp
+    src/core/CommitManager.cpp
+
     src/commands/AddCommand.cpp
     src/commands/CommitCommand.cpp
     src/commands/InitCommand.cpp
