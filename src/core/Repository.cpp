@@ -1,5 +1,7 @@
 #include "core/Repository.h"
 #include <fstream>
+#include <string>
+#include <iostream>
 
 bool Repository::exists() const{
     return std::filesystem::exists(repoPath);
@@ -40,4 +42,33 @@ bool Repository::init(){
 
 std::filesystem::path Repository::getStagingPath() const{
     return repoPath / "staging";
+}
+
+std::string Repository::readHead() const{
+
+    if (!std::filesystem::exists(repoPath / "HEAD")){
+        std::cout << "HEAD file not found.";
+        return "";
+    }
+
+    std::ifstream file(repoPath / "HEAD");
+
+    std::string content;
+
+    std::getline(file, content);
+
+    return content;
+}
+
+void Repository::updateHead(std::string commitId){
+    std::string context = commitId;
+
+    std::ofstream file(repoPath / "HEAD");
+
+    file << context;
+
+}
+
+std::filesystem::path Repository::getCommitsPath() const{
+    return repoPath / "commits";
 }
