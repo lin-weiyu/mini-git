@@ -6,6 +6,7 @@
 #include "commands/InitCommand.h"
 #include "commands/AddCommand.h"
 #include "commands/CommitCommand.h"
+#include "commands/LogCommand.h"
 
 int main(int argc, char* argv[]){
 
@@ -26,6 +27,9 @@ int main(int argc, char* argv[]){
     }
     else if (command == "commit"){
         cmd = std::make_unique<CommitCommand>();
+    }
+    else if (command == "log"){
+        cmd = std::make_unique<LogCommand>();
     }
     else{
         std::cout << "Unknow command\n";
