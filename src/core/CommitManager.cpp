@@ -65,6 +65,8 @@ bool CommitManager::createCommit(std::string content){
 
     meta << "id:" << nextId << "\n";
 
+    meta << "parent:" << head << "\n";
+
     meta << "message:" << content << "\n";
 
     meta << "timestamp:" << getTime() << "\n";
