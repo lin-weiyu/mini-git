@@ -158,11 +158,13 @@ TEST(CommitManagerTest, createCommit){
 
     std::ifstream metafile(meta);
 
-    std::string metaid, metamessage;
+    std::string metaid, metamessage, parent;
 
-    metafile >> metaid >> metamessage;
+    metafile >> metaid >> parent >> metamessage;
 
     EXPECT_EQ(metaid, "id:1");
+
+    EXPECT_EQ(parent, "parent:0");
 
     EXPECT_EQ(metamessage, "message:message");
 
@@ -183,6 +185,18 @@ TEST(CommitManagerTest, createCommit){
     EXPECT_EQ(std::filesystem::exists(repo.getCommitsPath() / "2"), true);
     
     EXPECT_EQ(std::filesystem::exists(repo.getCommitsPath() / "2/meta"), true);
+
+    meta = repo.getCommitsPath() / "2/meta";
+
+    metafile = std::ifstream(meta);
+
+    metafile >> metaid >> parent >> metamessage;
+
+    EXPECT_EQ(metaid, "id:2");
+
+    EXPECT_EQ(parent, "parent:1");
+
+    EXPECT_EQ(metamessage, "message:message");
 
     std::filesystem::remove_all(".mygit");
 }
