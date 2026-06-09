@@ -9,6 +9,7 @@
 #include "core/CommitManager.h"
 #include "commands/ICommand.h"
 #include "commands/AddCommand.h"
+#include "commands/LogCommand.h"
 
 TEST(RepositoryTest, InitCreatesRepository){
 
@@ -160,7 +161,11 @@ TEST(CommitManagerTest, createCommit){
 
     std::string metaid, metamessage, parent;
 
-    metafile >> metaid >> parent >> metamessage;
+    std::getline(metafile, metaid);
+
+    std::getline(metafile, parent);
+
+    std::getline(metafile, metamessage);
 
     EXPECT_EQ(metaid, "id:1");
 
@@ -190,13 +195,78 @@ TEST(CommitManagerTest, createCommit){
 
     metafile = std::ifstream(meta);
 
-    metafile >> metaid >> parent >> metamessage;
+    getline(metafile, metaid);
+
+    getline(metafile, parent);
+
+    getline(metafile, metamessage);
 
     EXPECT_EQ(metaid, "id:2");
 
     EXPECT_EQ(parent, "parent:1");
 
     EXPECT_EQ(metamessage, "message:message");
+
+    std::filesystem::remove_all(".mygit");
+}
+
+TEST(CommitManagerTest, logCommit){
+    std::filesystem::remove_all(".mygit");
+
+    Repository repo;
+
+    CommitManager commitManager(repo);
+
+    std::string message = "message";
+
+    EXPECT_EQ(commitManager.createCommit(message), false);
+    
+    repo.init();
+
+    EXPECT_EQ(commitManager.createCommit(message), false);
+
+    std::unique_ptr<ICommand> cmd = std::make_unique<AddCommand>();
+
+    std::ofstream file("hello_1.txt");
+
+    file << "hello world 1";
+
+    file.close();
+
+    std::vector<std::string> args = {"hello_1.txt"};
+
+    cmd->execute(args);
+
+    commitManager.createCommit(message + " 1");
+    
+
+    std::ofstream file2("hello_2.txt");
+
+    file2 << "hello world 2";
+
+    file2.close();
+
+    args = {"hello_2.txt"};
+
+    cmd->execute(args);
+
+    commitManager.createCommit(message + " 2");
+
+    std::vector<MetaData> datas = commitManager.getCommitHistory();
+
+    MetaData data_1 = datas[0], data_2 = datas[1];
+
+    EXPECT_EQ(data_1[0], "1");
+
+    EXPECT_EQ(data_1[1], "0");
+
+    EXPECT_EQ(data_1[2], "message 1");
+    
+    EXPECT_EQ(data_2[0], "2");
+
+    EXPECT_EQ(data_2[1], "1");
+
+    EXPECT_EQ(data_2[2], "message 2");
 
     std::filesystem::remove_all(".mygit");
 }

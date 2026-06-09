@@ -5,6 +5,7 @@
 #include <ctime>
 #include <sstream>
 #include <fstream>
+#include <array>
 
 #include "core/CommitManager.h"
 
@@ -74,4 +75,69 @@ bool CommitManager::createCommit(std::string content){
     repo.updateHead(nextId);
 
     return true;
+}
+
+
+std::vector<MetaData> CommitManager::getCommitHistory(){
+    std::string currentId = repo.readHead();
+    
+    std::vector<MetaData> datas;
+
+    if (currentId == "0"){
+        return datas;
+    }
+
+    while (currentId != "0"){
+        std::filesystem::path meta = repo.getCommitsPath() / currentId  / "meta";
+
+        std::ifstream metafile(meta);
+
+        std::string line, key, value;
+        
+        MetaData data;
+
+        while (getline(metafile, line)){
+            size_t pos = line.find(":");
+            
+            key = line.substr(0, pos);
+
+            value = line.substr(pos + 1);
+
+            if (key == "id") data[Metadata_id] = value;
+            else if (key == "parent") data[Metadata_parent] = value;
+            else if (key == "message") data[Metadata_message] = value;
+            else if (key == "timestamp") data[Metadata_date] = value;
+
+        }
+        datas.push_back(data);
+
+        currentId = data[Metadata_parent];
+    }
+
+    std::reverse(datas.begin(), datas.end());
+
+    return datas;
+}
+
+
+void CommitManager::logCommit(){
+    std::vector<MetaData> datas = getCommitHistory();
+
+    if (datas.empty()){
+        std::cout << "Not commit yet.\n";
+
+        return;
+    }
+
+    for (const MetaData& data : datas){
+        std::cout << "id: " << data[Metadata_id] << "\n";
+
+        std::cout << "parent: " << data[Metadata_parent] << "\n";
+
+        std::cout << "message: " << data[Metadata_message] << "\n";
+
+        std::cout << "date: " << data[Metadata_date] << "\n";
+
+        std::cout << "\n";
+    }
 }
