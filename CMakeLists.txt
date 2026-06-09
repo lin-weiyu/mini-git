@@ -15,6 +15,7 @@ add_executable(
     src/commands/InitCommand.cpp
     src/commands/AddCommand.cpp
     src/commands/CommitCommand.cpp
+    src/commands/LogCommand.cpp
 
     src/core/Repository.cpp
     src/core/CommitManager.cpp
@@ -34,6 +35,7 @@ add_executable(
     src/commands/AddCommand.cpp
     src/commands/CommitCommand.cpp
     src/commands/InitCommand.cpp
+    src/commands/LogCommand.cpp
 )
 
 target_include_directories(
