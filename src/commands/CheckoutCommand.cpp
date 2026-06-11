@@ -16,7 +16,7 @@ void CheckoutCommand::execute(const std::vector<std::string>& args){
 
     CommitManager manager(repo);
 
-    if (!manager.checkout(args[0])){
+    if (manager.checkout(args[0])){
         std::cout << "Checkout success.\n";
     }
     else{
