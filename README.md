@@ -30,31 +30,30 @@ make
 ### init
 
 ```bash
-./mini-git init
+./build/mini-git init
 ```
 
 ### add
 
 ```bash
-./mini-git add <file>
+./build/mini-git add <file>
 ```
 
 ### commit
 
 ```bash
-./mini-git commit -m <message>
+./build/mini-git commit -m <message>
 ```
 
 ### log
 
 ```bash
-./mini-git log
+./build/mini-git log
 ```
-
-## the no-standard issues in project development
-- the github actions has not been fully developed
 
 ## project schedule
 
-- complete init, add, commit, log feture
+- complete init, add, commit, log and checkout feture
 - the lack the github actions
+- the program has not been properly encapsulated
+- the first version can currently only manage files at the same level as .mygit using ./mini-git. It is not yet capable of managing directories and the files within them
