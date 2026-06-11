@@ -6,6 +6,7 @@
 #include <sstream>
 #include <fstream>
 #include <array>
+#include <unordered_set>
 
 #include "core/CommitManager.h"
 
@@ -44,7 +45,7 @@ bool CommitManager::createCommit(std::string content){
         }
     }
 
-    std::string head = std::to_string(maxId);
+    std::string head = repo.readHead();
 
     std::string nextId = std::to_string(maxId + 1);
 
@@ -159,4 +160,74 @@ void CommitManager::logCommit(){
 
         std::cout << "\n";
     }
+}
+
+bool CommitManager::checkout(std::string targetId){
+
+    if (!repo.exists()){
+        std::cout << "Not initialized.\n";
+        return false;
+    }
+
+    int targetId_exit = 0;
+
+    for (const auto& entry : std::filesystem::directory_iterator(repo.getCommitsPath())){
+        if (entry.is_directory()){
+
+            std::string Id = entry.path().filename().string();
+
+            if (Id == targetId){
+                targetId_exit = 1;
+                break;
+            }
+        }
+    }
+
+    if (!targetId_exit){
+        std::cout << "Id was not found.\n";
+        return false;
+    }
+
+    repo.updateHead(targetId);
+
+    std::string currentId = targetId;
+
+    std::unordered_set<std::string> tracked;
+
+    std::filesystem::path targetPath(".");
+
+    std::filesystem::path sources = repo.getCommitsPath();
+
+    while (currentId != "0"){
+        std::filesystem::path currentCommitPath = sources / currentId;
+
+        for (const auto& entry : std::filesystem::directory_iterator(currentCommitPath)){
+
+            std::string currentFileName = entry.path().filename();
+
+            if (currentFileName == "meta") continue;
+
+            if (tracked.find(currentFileName) != tracked.end()) continue;
+
+            std::filesystem::copy(currentCommitPath / currentFileName, targetPath / currentFileName, std::filesystem::copy_options::overwrite_existing);
+
+            tracked.insert(currentFileName);
+        }
+
+        std::ifstream meta(currentCommitPath / "meta");
+
+        std::string Id, parent;
+
+        std::getline(meta, Id);
+
+        std::getline(meta, parent);
+
+        int pos = parent.find(":");
+
+        parent = parent.substr(pos + 1);
+
+        currentId = parent;
+    }
+
+    return true;
 }
