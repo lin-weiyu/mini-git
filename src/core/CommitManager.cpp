@@ -33,9 +33,20 @@ bool CommitManager::createCommit(std::string content){
         std::cout << "not found .mygit\n";
         return false;
     }
-    std::string head = repo.readHead();
+    
+    int maxId = 0;
+    
+    for (const auto& entry: std::filesystem ::directory_iterator(repo.getCommitsPath())){
+        if (entry.is_directory()){
+            int id = std::stoi(entry.path().filename().string());
 
-    std::string nextId = std::to_string(std::stoi(head) + 1);
+            if (id > maxId) maxId = id;
+        }
+    }
+
+    std::string head = std::to_string(maxId);
+
+    std::string nextId = std::to_string(maxId + 1);
 
     std::filesystem::path currenthead = repo.getCommitsPath() / nextId;
     
@@ -64,15 +75,23 @@ bool CommitManager::createCommit(std::string content){
 
     std::ofstream meta(currenthead / "meta");
 
+    std::string currentTime = getTime();
+
     meta << "id:" << nextId << "\n";
 
     meta << "parent:" << head << "\n";
 
     meta << "message:" << content << "\n";
 
-    meta << "timestamp:" << getTime() << "\n";
+    meta << "timestamp:" << currentTime << "\n";
 
     repo.updateHead(nextId);
+
+    std::cout << "id:" << nextId << "\n";
+
+    std::cout << "message:" << content << "\n";
+
+    std::cout << "timestamp:" << currentTime << "\n";
 
     return true;
 }
