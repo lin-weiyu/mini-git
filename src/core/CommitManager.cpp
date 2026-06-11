@@ -194,7 +194,7 @@ bool CommitManager::checkout(std::string targetId){
 
     std::unordered_set<std::string> tracked;
 
-    std::filesystem::path targetPath(".");
+    std::filesystem::path targetPath = repo.getRootPath();
 
     std::filesystem::path sources = repo.getCommitsPath();
 

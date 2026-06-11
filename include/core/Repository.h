@@ -15,6 +15,8 @@ public:
 
     std::filesystem::path getCommitsPath() const;
 
+    std::filesystem::path getRootPath() const;
+
     void updateHead(std::string commitId);
 private:
     void createDirectories();

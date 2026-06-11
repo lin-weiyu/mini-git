@@ -72,3 +72,8 @@ void Repository::updateHead(std::string commitId){
 std::filesystem::path Repository::getCommitsPath() const{
     return repoPath / "commits";
 }
+
+std::filesystem::path Repository::getRootPath() const{
+    auto parent = repoPath.parent_path();
+    return parent.empty() ? "." : parent;
+}
