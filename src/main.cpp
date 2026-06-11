@@ -7,6 +7,7 @@
 #include "commands/AddCommand.h"
 #include "commands/CommitCommand.h"
 #include "commands/LogCommand.h"
+#include "commands/CheckoutCommand.h"
 
 int main(int argc, char* argv[]){
 
@@ -30,6 +31,9 @@ int main(int argc, char* argv[]){
     }
     else if (command == "log"){
         cmd = std::make_unique<LogCommand>();
+    }
+    else if (command == "checkout"){
+        cmd = std::make_unique<CheckoutCommand>();
     }
     else{
         std::cout << "Unknow command\n";
