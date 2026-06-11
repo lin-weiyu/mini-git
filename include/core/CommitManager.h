@@ -30,4 +30,6 @@ public:
     std::vector<MetaData> getCommitHistory();
 
     void logCommit();
+
+    bool checkout(std::string targetId);
 };

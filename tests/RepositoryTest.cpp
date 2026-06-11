@@ -10,6 +10,9 @@
 #include "commands/ICommand.h"
 #include "commands/AddCommand.h"
 #include "commands/LogCommand.h"
+#include "commands/InitCommand.h"
+#include "commands/CheckoutCommand.h"
+#include "commands/CommitCommand.h"
 
 TEST(RepositoryTest, InitCreatesRepository){
 
@@ -238,7 +241,6 @@ TEST(CommitManagerTest, logCommit){
     cmd->execute(args);
 
     commitManager.createCommit(message + " 1");
-    
 
     std::ofstream file2("hello_2.txt");
 
@@ -267,6 +269,108 @@ TEST(CommitManagerTest, logCommit){
     EXPECT_EQ(data_2[1], "1");
 
     EXPECT_EQ(data_2[2], "message 2");
+
+    std::filesystem::remove_all(".mygit");
+
+    std::filesystem::remove("hello_1.txt");
+
+    std::filesystem::remove("hello_2.txt");
+}
+
+TEST(CommitManagerTest, checkout){
+    std::filesystem::remove_all(".mygit");
+
+    Repository repo;
+
+    repo.init();
+
+    std::vector<std::string> args;
+    
+    std::string message = "message";
+    
+    {
+        std::ofstream file("hello.txt");
+        
+        file << "hello 1";
+        
+        file.close();
+    }
+
+    args = {"hello.txt"};
+    
+    std::unique_ptr<ICommand> cmd = std::make_unique<AddCommand>();
+    
+    cmd->execute(args);
+
+    cmd = std::make_unique<CommitCommand>();
+    
+    args = {"-m", message};
+
+    cmd->execute(args);
+
+    {
+    std::ofstream file("hello.txt");
+
+    file << "hello 2";
+
+    file.close();
+    }
+
+    args = {"hello.txt"};
+
+    cmd = std::make_unique<AddCommand>();
+
+    cmd->execute(args);
+
+    cmd = std::make_unique<CommitCommand>();
+
+    args = {"-m", message};
+    
+    cmd->execute(args);
+    
+    cmd = std::make_unique<CheckoutCommand>();
+
+    args = {"1"};    
+    
+    cmd->execute(args);
+    
+    EXPECT_EQ(repo.readHead(), "1");
+
+    std::string content;
+    
+    {
+    std::ifstream file("hello.txt");
+
+    std::getline(file, content);
+
+    file.close();
+    }
+
+    EXPECT_EQ(content, "hello 1");
+
+    {
+    std::ofstream file("hello.txt");
+
+    file << "hello 3";
+
+    file.close();
+    }
+    
+    cmd = std::make_unique<AddCommand>();
+
+    args = {};
+
+    cmd->execute(args);
+
+    cmd = std::make_unique<CommitCommand>();
+
+    args = {"-m", message};
+
+    cmd->execute(args);
+
+    EXPECT_EQ(repo.readHead(), "3");
+
+    std::filesystem::remove("hello.txt");
 
     std::filesystem::remove_all(".mygit");
 }
