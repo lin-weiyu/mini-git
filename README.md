@@ -54,6 +54,5 @@ make
 ## project schedule
 
 - complete init, add, commit, log and checkout feture
-- the lack the github actions
 - the program has not been properly encapsulated
 - the first version can currently only manage files at the same level as .mygit using ./mini-git. It is not yet capable of managing directories and the files within them
