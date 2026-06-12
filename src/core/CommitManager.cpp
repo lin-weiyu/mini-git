@@ -7,6 +7,7 @@
 #include <fstream>
 #include <array>
 #include <unordered_set>
+#include <algorithm>
 
 #include "core/CommitManager.h"
 
