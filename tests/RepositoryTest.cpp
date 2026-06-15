@@ -374,3 +374,47 @@ TEST(CommitManagerTest, checkout){
 
     std::filesystem::remove_all(".mygit");
 }
+
+TEST(AddCommandTest, addDirectories){
+    std::filesystem::remove_all(".mygit");
+
+    Repository repo;
+
+    repo.init();
+
+    std::filesystem::create_directory("test1");
+
+    {
+        std::ofstream file("test1/hello.txt");
+
+        file << "hello addcommand test";
+
+        file.close();
+    }
+
+    std::unique_ptr<ICommand> cmd = std::make_unique<AddCommand>();
+
+    std::vector<std::string> args = {"add", "test1"};
+
+    cmd->execute(args);
+
+    std::filesystem::path file_path = repo.getStagingPath() / "test1/hello.txt";
+
+    EXPECT_TRUE(std::filesystem::exists(file_path));
+
+    std::string test;
+
+    {
+        std::ifstream file(file_path);
+
+        getline(file, test);
+
+        file.close();
+    }
+
+    EXPECT_EQ(test, "hello addcommand test");
+
+    std::filesystem::remove_all(".mygit");
+
+    std::filesystem::remove_all("test1");
+}
