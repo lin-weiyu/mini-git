@@ -358,7 +358,7 @@ TEST(CommitManagerTest, checkout){
     
     cmd = std::make_unique<AddCommand>();
 
-    args = {};
+    args = {"hello.txt"};
 
     cmd->execute(args);
 
@@ -394,7 +394,7 @@ TEST(AddCommandTest, addDirectories){
 
     std::unique_ptr<ICommand> cmd = std::make_unique<AddCommand>();
 
-    std::vector<std::string> args = {"add", "test1"};
+    std::vector<std::string> args = {"test1"};
 
     cmd->execute(args);
 

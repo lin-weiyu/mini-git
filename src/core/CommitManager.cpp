@@ -55,12 +55,16 @@ bool CommitManager::createCommit(std::string content){
     std::filesystem::create_directory(currenthead);
     
     int num = 0;
-    for (const auto& entry : std::filesystem::directory_iterator(repo.getStagingPath())){
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(repo.getStagingPath())){
         if (entry.is_regular_file()){
-            
+
             num++;
-            
-            auto target = currenthead / entry.path().filename();
+
+            auto relative_path = std::filesystem::relative(entry.path(), repo.getStagingPath());
+
+            auto target = currenthead / relative_path;
+
+            std::filesystem::create_directories(target.parent_path());
             
             std::filesystem::copy(entry.path(), target, std::filesystem::copy_options::overwrite_existing);
         }
@@ -73,7 +77,6 @@ bool CommitManager::createCommit(std::string content){
         
         return false;
     }
-
 
     std::ofstream meta(currenthead / "meta");
 
@@ -94,6 +97,10 @@ bool CommitManager::createCommit(std::string content){
     std::cout << "message:" << content << "\n";
 
     std::cout << "timestamp:" << currentTime << "\n";
+
+    std::filesystem::remove_all(repo.getStagingPath());
+
+    std::filesystem::create_directory(repo.getStagingPath());
 
     return true;
 }
@@ -202,17 +209,25 @@ bool CommitManager::checkout(std::string targetId){
     while (currentId != "0"){
         std::filesystem::path currentCommitPath = sources / currentId;
 
-        for (const auto& entry : std::filesystem::directory_iterator(currentCommitPath)){
+        for (const auto& entry : std::filesystem::recursive_directory_iterator(currentCommitPath)){
+
+            if (entry.is_directory()) continue;
 
             std::string currentFileName = entry.path().filename();
 
             if (currentFileName == "meta") continue;
 
-            if (tracked.find(currentFileName) != tracked.end()) continue;
+            std::filesystem::path relative_path = std::filesystem::relative(entry.path(), currentCommitPath);
 
-            std::filesystem::copy(currentCommitPath / currentFileName, targetPath / currentFileName, std::filesystem::copy_options::overwrite_existing);
+            if (tracked.find(relative_path.string()) != tracked.end()) continue;
 
-            tracked.insert(currentFileName);
+            std::filesystem::path target = repo.getRootPath() / relative_path;
+
+            std::filesystem::create_directories(target.parent_path());
+
+            std::filesystem::copy(entry.path(), target, std::filesystem::copy_options::overwrite_existing);
+
+            tracked.insert(relative_path.string());
         }
 
         std::ifstream meta(currentCommitPath / "meta");
