@@ -54,6 +54,6 @@ void AddCommand::execute(
             }
         }
 
-        std::cout << "Added " << source.filename().string() << "\n";
+        std::cout << "Added " << source.string() << "\n";
     }
 }
